@@ -38,3 +38,6 @@ DEV_ACCOUNT_KEY = 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6t
 
 # Socket timeout in seconds is 5 min * 60 seconds
 _SOCKET_TIMEOUT = 5 * 60
+
+#Encryption constants
+_ENCRYPTION_PROTOCOL_V1 = '1.0'
