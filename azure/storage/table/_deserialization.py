@@ -270,10 +270,10 @@ def _decrypt_and_deserialize_entity(entity, property_resolver, require_encryptio
                                     key_encryption_key, key_resolver):
     _validate_decryption_required(require_encryption, key_encryption_key,
                                           key_resolver)
-    entity_iv, encrypted_properties, content_encryption_key = None, None, None
+    entity_iv, encrypted_properties, content_encryption_key, isJavaV1 = None, None, None, False
     try:
         if (key_encryption_key is not None) or (key_resolver is not None):
-            entity_iv, encrypted_properties, content_encryption_key = \
+            entity_iv, encrypted_properties, content_encryption_key, isJavaV1 = \
                 _extract_encryption_metadata(entity, require_encryption, key_encryption_key, key_resolver)
     except:
         raise AzureException(_ERROR_DECRYPTION_FAILURE)
@@ -284,7 +284,7 @@ def _decrypt_and_deserialize_entity(entity, property_resolver, require_encryptio
         content_encryption_key is not None:
         try:
             entity = _decrypt_entity(entity, encrypted_properties, content_encryption_key,
-                            entity_iv)
+                            entity_iv, isJavaV1)
         except:
             raise AzureException(_ERROR_DECRYPTION_FAILURE)
 

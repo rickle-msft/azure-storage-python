@@ -15,6 +15,7 @@
 from .._error import (
     _validate_not_none,
     _validate_type_bytes,
+    _validate_encryption_unsupported,
     _ERROR_VALUE_NEGATIVE,
 )
 from .._common_conversion import (
@@ -24,7 +25,7 @@ from .._common_conversion import (
     _get_content_md5,
 )
 from .._serialization import (
-    _get_request_body_bytes_only,
+    _get_data_bytes_only,
     _add_metadata_headers,
 )
 from .._http import HTTPRequest
@@ -166,6 +167,8 @@ class AppendBlobService(BaseBlobService):
         '''
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
+
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self._get_host()
@@ -254,6 +257,8 @@ class AppendBlobService(BaseBlobService):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('block', block)
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
+
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self._get_host()
@@ -271,7 +276,7 @@ class AppendBlobService(BaseBlobService):
             'If-Match': _to_str(if_match),
             'If-None-Match': _to_str(if_none_match)
         }
-        request.body = _get_request_body_bytes_only('block', block)
+        request.body = _get_data_bytes_only('block', block)
 
         if validate_content:
             computed_md5 = _get_content_md5(request.body)
@@ -328,6 +333,7 @@ class AppendBlobService(BaseBlobService):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('file_path', file_path)
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
 
         count = path.getsize(file_path)
         with open(file_path, 'rb') as stream:
@@ -397,6 +403,7 @@ class AppendBlobService(BaseBlobService):
         _validate_not_none('blob', blob)
         _validate_not_none('index', index)
         _validate_type_bytes('blob', blob)
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
 
         if index < 0:
             raise IndexError(_ERROR_VALUE_NEGATIVE.format('index'))
@@ -468,6 +475,7 @@ class AppendBlobService(BaseBlobService):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('text', text)
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
 
         if not isinstance(text, bytes):
             _validate_not_none('encoding', encoding)
@@ -536,6 +544,7 @@ class AppendBlobService(BaseBlobService):
         _validate_not_none('container_name', container_name)
         _validate_not_none('blob_name', blob_name)
         _validate_not_none('stream', stream)
+        _validate_encryption_unsupported(self.require_encryption, self.key_encryption_key)
 
         _upload_blob_chunks(
             blob_service=self,
